@@ -1,6 +1,5 @@
 # Performing Image-Driven Reverse Image Search for E-Commerce products.
-Building a Reverse Image Product Search application using Qdrant Similarity Search, Meta's ImagBind and Gradio.
-
+## Building a Reverse Image Product Search application using Qdrant Similarity Search, Meta's ImagBind and Gradio.
 The dataset is taken from Kaggle which is an Ecommerce Product Image dataset. You can visit this [file](data.txt) to see the dataset and construct the files accordingly. 
 
 Clone this repository and install the [dependencies](requirements.txt).

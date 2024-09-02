@@ -1,0 +1,5 @@
+opendatasets
+qdrant-client 
+tqdm
+gradio
+torch
