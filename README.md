@@ -16,5 +16,3 @@ You'll see the running application in two tabs.
 **Tab 0:** ![](assets/Tab0.jpg)
 **Tab 1:** ![](assets/Tab1.jpg)
 
-Try a reverse image search by uploading an image and getting images of the products from the selected product categories.
-For more details, visit my medium [article]()
