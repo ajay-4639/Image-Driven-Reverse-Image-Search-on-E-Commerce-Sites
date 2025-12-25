@@ -1,0 +1,72 @@
+version: '3.8'
+
+# GPU-enabled docker-compose configuration
+# Requires NVIDIA Container Toolkit
+# Usage: docker-compose -f docker-compose.gpu.yml up
+
+services:
+  # Backend API Service with GPU support
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile.gpu
+    container_name: image-search-backend-gpu
+    restart: unless-stopped
+    ports:
+      - "8000:8000"
+    environment:
+      - APP_NAME=Image Search API
+      - DEBUG=false
+      - DEVICE=cuda
+      - USE_IN_MEMORY=true
+      - DATA_DIR=/app/data/fashion-images
+      - UPLOAD_DIR=/app/uploads
+      - IMAGEBIND_PATH=/app/ImageBind
+      - CORS_ORIGINS=["http://localhost:3000","http://localhost:80"]
+    volumes:
+      - ./data:/app/data:ro
+      - uploads:/app/uploads
+      - ./ImageBind:/app/ImageBind:ro
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: 1
+              capabilities: [gpu]
+    networks:
+      - app-network
+
+  # Frontend Service
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    container_name: image-search-frontend-gpu
+    restart: unless-stopped
+    ports:
+      - "80:80"
+    depends_on:
+      - backend
+    networks:
+      - app-network
+
+  # Qdrant Vector Database
+  qdrant:
+    image: qdrant/qdrant:latest
+    container_name: image-search-qdrant-gpu
+    restart: unless-stopped
+    ports:
+      - "6333:6333"
+    volumes:
+      - qdrant_storage:/qdrant/storage
+    networks:
+      - app-network
+
+networks:
+  app-network:
+    driver: bridge
+
+volumes:
+  uploads:
+  qdrant_storage:

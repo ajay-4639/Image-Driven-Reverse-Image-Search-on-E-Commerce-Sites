@@ -1,0 +1,51 @@
+version: '3.8'
+
+# Development docker-compose configuration
+# Usage: docker-compose -f docker-compose.dev.yml up
+
+services:
+  # Backend API Service (Development)
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: image-search-backend-dev
+    restart: unless-stopped
+    ports:
+      - "8000:8000"
+    environment:
+      - APP_NAME=Image Search API (Dev)
+      - DEBUG=true
+      - DEVICE=cpu
+      - USE_IN_MEMORY=true
+      - DATA_DIR=/app/data/fashion-images
+      - UPLOAD_DIR=/app/uploads
+      - CORS_ORIGINS=["http://localhost:3000","http://localhost:5173","http://127.0.0.1:3000","http://127.0.0.1:5173"]
+    volumes:
+      - ./backend:/app
+      - ./data:/app/data:ro
+      - uploads:/app/uploads
+    command: uvicorn app.main:app --host 0.0.0.0 --port 8000 --reload
+    networks:
+      - app-network
+
+  # Qdrant Vector Database
+  qdrant:
+    image: qdrant/qdrant:latest
+    container_name: image-search-qdrant-dev
+    restart: unless-stopped
+    ports:
+      - "6333:6333"
+      - "6334:6334"
+    volumes:
+      - qdrant_storage_dev:/qdrant/storage
+    networks:
+      - app-network
+
+networks:
+  app-network:
+    driver: bridge
+
+volumes:
+  uploads:
+  qdrant_storage_dev:
